@@ -63,14 +63,35 @@
 				</div><!-- .site-branding -->
 
 				<nav id="site-navigation" class="main-navigation">
-					<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false"><?php esc_html_e( 'Primary Menu', 'epbs' ); ?></button>
+					<button id="menu-toggle" class="menu-toggle">
+						<span><span class="first"></span></span>
+						<span><span class="second"></span></span>
+					</button>
 					<?php
-						wp_nav_menu(
-							array(
-								'theme_location' => 'menu-1',
-								'menu_id'        => 'primary-menu',
-							)
-						);
+						
+						if ( has_nav_menu( 'menu-1' ) ) {
+																
+							wp_nav_menu(
+								array(
+									'theme_location' => 'menu-1',
+									'menu_id'        => 'primary-menu',
+								)
+							);
+		
+						} else {
+
+							echo '<ul class="menu nav-menu ">';
+						
+							wp_list_pages(array(
+								'container' => '',
+								'title_li' => '',
+								'walker' => new WPBS_Page_Walker(),
+							));
+
+							echo '</ul>';
+							
+						} 
+
 					?>
 				</nav><!-- #site-navigation -->
 

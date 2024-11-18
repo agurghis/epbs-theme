@@ -96,4 +96,53 @@
 			menuItem.classList.toggle( 'focus' );
 		}
 	}
+
+	// Mobile Menu Toggle and Close
+    const mobileToggle = document.getElementById('menu-toggle');
+    const closeButtons = document.querySelectorAll('.epbs-side-close, .close-side-menu-icon');
+    
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.body.classList.toggle('epbs-side-opened');
+            console.log("mobile menu toggled");
+        });
+    }
+
+    // Close menu buttons
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.body.classList.remove('epbs-side-opened');
+            // console.log("mobile menu closed");
+        });
+    });
+
+	// Append icons to menu items
+	document.querySelectorAll('.epbs-side-inner .menu-item-has-children').forEach(menuItem => {
+		const link = menuItem.querySelector('a');
+		if (link) {
+			const icon = document.createElement('i');
+			icon.className = 'open-sub-menu';
+			icon.setAttribute('aria-hidden', 'true');
+			link.appendChild(icon);
+		}
+	});
+
+	document.querySelectorAll(".epbs-side-inner .menu-item-has-children > a").forEach(function(anchor) {
+		anchor.addEventListener("click", function(e) {
+			// Check if the click was on the <i> element
+			if (e.target.classList.contains("open-sub-menu")) {
+				e.preventDefault(); // Prevent navigation to the link
+				const submenu = this.closest("li").querySelector(".sub-menu");
+	
+				if (submenu) {
+					const isHidden = submenu.style.display === "none" || !submenu.style.display;
+					submenu.style.display = isHidden ? "block" : "none";
+				}
+			}
+		});
+	});
+	
+
 }() );

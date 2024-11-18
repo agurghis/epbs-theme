@@ -7,6 +7,29 @@
  * @package EPBS
  */
 
+if ( ! function_exists( 'epbs_comments_post' ) ) :
+	/**
+	 * Prints HTML with meta information for the current post-date/time.
+	 */
+	function epbs_comments_post() {
+
+		?><a href="<?php echo esc_attr(get_permalink()); ?>#comments"><?php
+			// translators: text for one review
+			$singular_text = __('1 Comment', 'epbs');
+			// translators: % refers to the number of comments, when more than 1
+			$plural_text = __('% Comments', 'epbs');
+
+			echo wp_kses_post(get_comments_number_text(
+				'',
+				$singular_text,
+				$plural_text
+			));
+		?></a><?php
+
+	}
+endif;
+
+
 if ( ! function_exists( 'epbs_get_custom_excerpt' ) ) :
 	/**
 	 * Prints HTML with meta information for the current post-date/time.
@@ -29,7 +52,6 @@ if ( ! function_exists( 'epbs_get_custom_excerpt' ) ) :
 
 	}
 endif;
-
 if ( ! function_exists( 'epbs_posted_on' ) ) :
 	/**
 	 * Prints HTML with meta information for the current post-date/time.
@@ -52,6 +74,35 @@ if ( ! function_exists( 'epbs_posted_on' ) ) :
 			/* translators: %s: post date. */
 			esc_html_x( '%s', 'post date', 'epbs' ),
 			'<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . $time_string . '</a>'
+		);
+
+		echo '<span class="posted-on">' . $posted_on . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+	}
+endif;
+
+if ( ! function_exists( 'epbs_posted_on_single' ) ) :
+	/**
+	 * Prints HTML with meta information for the current post-date/time.
+	 */
+	function epbs_posted_on_single() {
+		$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+		if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+			$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+		}
+
+		$time_string = sprintf(
+			$time_string,
+			esc_attr( get_the_date( DATE_W3C ) ),
+			esc_html( get_the_date() ),
+			esc_attr( get_the_modified_date( DATE_W3C ) ),
+			esc_html( get_the_modified_date() )
+		);
+
+		$posted_on = sprintf(
+			/* translators: %s: post date. */
+			esc_html_x( '%s', 'post date', 'epbs' ),
+			'<span>' . $time_string . '</span>'
 		);
 
 		echo '<span class="posted-on">' . $posted_on . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -86,7 +137,24 @@ if ( ! function_exists( 'epbs_entry_categories' ) ) :
 			$categories_list = get_the_category_list( '<span class="dot-separator"></span>');
 			if ( $categories_list ) {
 				/* translators: 1: list of categories. */
-				printf( '<span class="cat-links">' . esc_html__( '%1$s', 'epbs' ) . '</span>', $categories_list ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				printf( '<span class="cat-links">' . esc_html__( '%1$s', 'epbs' ) . '</span>', $categories_list );
+			}
+		}
+	}
+endif;
+
+if ( ! function_exists( 'epbs_entry_categories_single' ) ) :
+	/**
+	 * Prints HTML with meta information for the categories, tags and comments.
+	 */
+	function epbs_entry_categories_single() {
+		// Hide category and tag text for pages.
+		if ( 'post' === get_post_type() ) {
+			/* translators: used between list items, there is a space after the comma */
+			$categories_list = get_the_category_list( '<span class="dot-separator"></span>');
+			if ( $categories_list ) {
+				/* translators: 1: list of categories. */
+				printf( '<span class="cat-links-single">' . esc_html__( '%1$s', 'epbs' ) . '</span>', $categories_list );
 			}
 		}
 	}
@@ -171,7 +239,7 @@ if ( ! function_exists( 'epbs_post_thumbnail' ) ) :
 			<a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1">
 				<?php
 					the_post_thumbnail(
-						'post-thumbnail',
+						'small-thumbnail',
 						array(
 							'alt' => the_title_attribute(
 								array(

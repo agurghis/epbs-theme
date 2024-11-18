@@ -19,52 +19,93 @@ get_header();
 
 		<div class="container">
 
+			<?php
+
+				if ( is_home() && ! is_front_page() ) :
+					?>
+					<header class="page-title-container">
+						<h1 class="page-title screen-reader-text"><?php single_post_title(); ?></h1>
+					</header>
+					<?php
+				endif;
+
+			?>
+
 			<div class="blog-container">
 
 				<div class="main-content">
 
-					<div 
-						
-						<?php if(is_active_sidebar("sidebar-1") ) { ?>class="articles-grid-two"<?php } else { ?>class="articles-grid-three"<?php } ?>
-						
-						>
+					<?php
 
-						<?php
+						if ( have_posts() ) : ?>
 
-							if ( have_posts() ) :
+							<div 
+					
+								<?php 
+								
+									if(is_active_sidebar("sidebar-1") ) { 
+										?>class="articles-grid-two"<?php 
+									} else { 
+										?>class="articles-grid-three"<?php 
+									} 
+								?>
+								
+							>
 
-								if ( is_home() && ! is_front_page() ) :
-									?>
-									<header>
-										<h1 class="page-title screen-reader-text"><?php single_post_title(); ?></h1>
-									</header>
-									<?php
-								endif;
+								<?php 
 
-								/* Start the Loop */
-								while ( have_posts() ) :
-									the_post();
+									/* Start the Loop */
+									while ( have_posts() ) :
+										the_post();
 
-									/*
-									* Include the Post-Type-specific template for the content.
-									* If you want to override this in a child theme, then include a file
-									* called content-___.php (where ___ is the Post Type name) and that will be used instead.
-									*/
-									get_template_part( 'template-parts/content', get_post_type() );
+										/*
+										* Include the Post-Type-specific template for the content.
+										* If you want to override this in a child theme, then include a file
+										* called content-___.php (where ___ is the Post Type name) and that will be used instead.
+										*/
+										get_template_part( 'template-parts/content', get_post_type() );
 
-								endwhile;
+									endwhile; 
+								
+								?>
 
-								the_posts_navigation();
+							</div>
 
-							else :
+							<?php
 
-								get_template_part( 'template-parts/content', 'none' );
+							// Previous/next page navigation.
+							the_posts_pagination(
+								array(
+									'prev_text'          => __( 'Prev', 'royalstudio' ),
+									'next_text'          => __( 'Next', 'royalstudio' ),
+									'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'royalstudio' ) . ' </span>',
+								)
+							);
 
-							endif;
+						else : ?>
 
-						?>
+							<div 
+								
+								<?php 
+								
+									if(is_active_sidebar("sidebar-1") ) { 
+										?>class="articles-grid-two"<?php 
+									} else { 
+										?>class="articles-grid-three"<?php 
+									} 
+								?>
+							
+							>
 
-					</div>
+								<?php get_template_part( 'template-parts/content', 'none' ); ?>
+
+							</div>
+
+							<?php
+
+						endif;
+
+					?>
 
 				</div>
 

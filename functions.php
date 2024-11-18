@@ -31,6 +31,8 @@ function epbs_setup() {
 	// Add default posts and comments RSS feed links to head.
 	add_theme_support( 'automatic-feed-links' );
 
+	add_image_size('small-thumbnail', 300, 200, true);
+
 	/*
 		* Let WordPress manage the document title.
 		* By adding theme support, we declare that this theme does not use a
@@ -141,7 +143,7 @@ function epbs_scripts() {
 
 	// Add Genericons, used in the main stylesheet.
 	wp_enqueue_style( 'genericons', get_template_directory_uri() . '/assets/genericons/genericons.css', array(), '3.4.1' );
-	
+
 	wp_enqueue_style( 'epbs-style', get_stylesheet_uri(), array(), _S_VERSION );
 	wp_style_add_data( 'epbs-style', 'rtl', 'replace' );
 
@@ -153,6 +155,11 @@ function epbs_scripts() {
 
 }
 add_action( 'wp_enqueue_scripts', 'epbs_scripts' );
+
+/**
+ * Menu Walker
+ */
+require get_template_directory() . '/inc/epbs-menu-walker.php';
 
 /**
  * Implement the Custom Header feature.

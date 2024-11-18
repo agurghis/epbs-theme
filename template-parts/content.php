@@ -15,26 +15,36 @@
 	
 		<header class="entry-header">
 
-			<?php epbs_entry_categories(); ?>
+			<?php if ( !is_singular() ) { epbs_entry_categories(); } ?>
 
 			<?php
 				if ( is_singular() ) :
-					the_title( '<h1 class="entry-title">', '</h1>' );
+					the_title( '<h1 class="entry-title single-post-title">', '</h1>' );
+
+					if ( 'post' === get_post_type() ) :
+						?>
+						<div class="entry-meta single-post-meta">
+							<div class="gravatar">
+								<a href="<?php echo get_author_posts_url( get_the_author_meta( 'ID' ), get_the_author_meta( 'user_nicename' ) ); ?>">
+									<img src="<?php echo esc_url(get_avatar_url( get_the_author_meta('user_email'), '25','' )); ?>" width="25" height="25"  class="avatar avatar-200 wp-user-avatar wp-user-avatar-200 alignnone photo">
+								</a>
+							</div>
+							<?php epbs_posted_by(); ?>
+							<span class="dot-separator"></span>
+							<?php epbs_posted_on_single(); ?>
+							<span class="dot-separator"></span>
+							<?php epbs_entry_categories_single(); ?>
+							<span class="dot-separator"></span>
+							<?php epbs_comments_post(); ?>
+						</div><!-- .entry-meta -->
+					<?php endif;
+
 				else :
 					the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
+					epbs_post_thumbnail();
 				endif;
 			?>
 		</header><!-- .entry-header -->
-
-		<?php 
-
-			if ( is_singular() ) {
-
-				epbs_post_thumbnail();
-
-			}
-			
-		?>
 
 		<div class="entry-content">
 			<?php
@@ -70,18 +80,24 @@
 
 			?>
 		</div><!-- .entry-content -->
+		
+		<?php if ( ! is_singular() ) : ?>
 
-		<footer class="entry-footer">
-			<?php
-				if ( 'post' === get_post_type() ) :
-			?>
-				<div class="entry-meta">
-					<?php epbs_posted_by(); ?>
-					<span class="dot-separator"></span>
-					<?php epbs_posted_on(); ?>
-				</div><!-- .entry-meta -->
-			<?php endif; ?>
-		</footer><!-- .entry-footer -->
+			<footer class="entry-footer">
+				<?php if ( 'post' === get_post_type() ) : ?>
+					<div class="entry-meta">
+						<?php epbs_posted_by(); ?>
+						<span class="dot-separator"></span>
+						<?php epbs_posted_on(); ?>
+					</div><!-- .entry-meta -->
+				<?php endif; ?>
+			</footer><!-- .entry-footer -->
+
+		<?php else : ?>
+
+
+
+		<?php endif; ?>
 
 	</div>
 
