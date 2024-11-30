@@ -65,6 +65,30 @@
 					)
 				);
 
+				if ( has_tag() ) : ?>
+
+					<div class="entry-footer-tags d-block mt-8">
+						<div class="tags-holder">
+							<span class="tags-caption"><?php esc_html_e( "Tagged with", 'epbs' ); ?>: </span>
+							<?php
+
+								$post_tags = get_the_tags();
+
+								if ( $post_tags ) {
+									foreach( $post_tags as $tag ) {
+										?>
+										<span class="tag">
+											<a href="<?php echo get_tag_link($tag->term_id); ?>" rel="tag"><?php echo esc_html($tag->name); ?></a>
+										</span>
+										<?php
+									}
+								}
+							?>
+						</div>
+					</div>
+
+				<?php endif;
+
 				wp_link_pages(
 					array(
 						'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'epbs' ),

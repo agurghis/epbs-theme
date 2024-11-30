@@ -156,6 +156,68 @@ function epbs_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'epbs_scripts' );
 
+
+/* Enqueue JavaScripts & CSS
+*/
+add_action(
+   'customize_controls_enqueue_scripts',
+   function () {
+
+	   wp_add_inline_script(
+		   'wp-customize-widgets',
+		   'var oldCustomizeWidgetsInit = wp.customizeWidgets.initialize;' .
+		   'wp.customizeWidgets = {initialize: function (a, b) {
+			   window.epbsWidgetsEditorName = a
+			   window.epbsWidgetsBlockEditorSettings = b
+
+			   oldCustomizeWidgetsInit(a, b)
+		   }}'
+	   );
+
+	   $theme = epbs_get_wp_parent_theme();
+
+	   wp_enqueue_editor();
+
+	   wp_enqueue_style(
+		   'epbs-customizer-controls-styles',
+		   get_template_directory_uri() . '/assets/css/customizer-controls.css',
+		   [],
+		   $theme->get('Version')
+	   );
+
+	//    wp_enqueue_script(
+	// 	   'ct-customizer-controls',
+	// 	   get_template_directory_uri() . '/static/bundle/customizer-controls.js',
+	// 	   $theme->get('Version'),
+	// 	   true
+	//    );
+
+	   $has_child_theme = false;
+
+	   foreach (wp_get_themes() as $id => $theme) {
+		   if (! $theme->parent()) {
+			   continue;
+		   }
+
+		   if ($theme->parent()->get_stylesheet() === 'epbs') {
+			   $has_child_theme = true;
+		   }
+	   }
+
+	   $has_new_widgets = false;
+
+	   if (function_exists('wp_use_widgets_block_editor')) {
+		   $has_new_widgets = wp_use_widgets_block_editor();
+	   }
+
+   }
+);
+
+/**
+ * Helpers
+ */
+require get_template_directory() . '/inc/helpers.php';
+
 /**
  * Menu Walker
  */

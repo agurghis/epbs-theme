@@ -31,27 +31,34 @@ endif;
 
 
 if ( ! function_exists( 'epbs_get_custom_excerpt' ) ) :
-	/**
-	 * Prints HTML with meta information for the current post-date/time.
-	 */
-	function epbs_get_custom_excerpt($char_length = 150) {
-
-		$excerpt = get_the_content();
-		$excerpt = strip_tags($excerpt);
-		$excerpt = substr($excerpt, 0, $char_length);
-		
-		// Make sure we end at a word boundary
-		$excerpt = substr($excerpt, 0, strrpos($excerpt, ' '));
-		
-		// Add ellipsis if content was cut
-		if(strlen(get_the_content()) > $char_length) {
-			$excerpt .= '...';
-		}
-		
-		return $excerpt;
-
-	}
+    /** 
+     * Prints HTML with meta information for the current post-date/time.
+     */
+    function epbs_get_custom_excerpt($char_length = 150) {
+        $excerpt = get_the_content();
+        // Remove shortcodes but keep the content inside them
+        $excerpt = strip_shortcodes($excerpt);
+        // Alternative: remove shortcodes and their content
+        // $excerpt = preg_replace('/\[[^\]]*]/', '', $excerpt);
+        $excerpt = strip_tags($excerpt);
+        $excerpt = trim(preg_replace('/\s+/', ' ', $excerpt)); // Clean up extra spaces
+        $excerpt = substr($excerpt, 0, $char_length);
+        
+        // Make sure we end at a word boundary
+        if (strlen($excerpt) >= $char_length) {
+            $excerpt = substr($excerpt, 0, strrpos($excerpt, ' '));
+        }
+        
+        // Add ellipsis if content was cut
+        if(strlen(strip_shortcodes(get_the_content())) > $char_length) {
+            $excerpt .= '...';
+        }
+        
+        return $excerpt;
+    }
 endif;
+
+
 if ( ! function_exists( 'epbs_posted_on' ) ) :
 	/**
 	 * Prints HTML with meta information for the current post-date/time.

@@ -53,7 +53,7 @@
 							
 							if ( $epbs_description || is_customize_preview() ) :
 								?>
-								<p class="site-description"><?php echo $epbs_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+								<p class="site-description"><?php echo esc_html($epbs_description); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 								<?php
 							endif; 
 							

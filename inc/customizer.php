@@ -11,51 +11,66 @@
  * @param WP_Customize_Manager $wp_customize Theme Customizer object.
  */
 function epbs_customize_register( $wp_customize ) {
-	$wp_customize->get_setting( 'blogname' )->transport         = 'postMessage';
-	$wp_customize->get_setting( 'blogdescription' )->transport  = 'postMessage';
-	$wp_customize->get_setting( 'header_textcolor' )->transport = 'postMessage';
+    // Existing code...
+    $wp_customize->get_setting( 'blogname' )->transport         = 'postMessage';
+    $wp_customize->get_setting( 'blogdescription' )->transport  = 'postMessage';
+    $wp_customize->get_setting( 'header_textcolor' )->transport = 'postMessage';
 
-	if ( isset( $wp_customize->selective_refresh ) ) {
-		$wp_customize->selective_refresh->add_partial(
-			'blogname',
-			array(
-				'selector'        => '.site-title a',
-				'render_callback' => 'epbs_customize_partial_blogname',
-			)
-		);
-		$wp_customize->selective_refresh->add_partial(
-			'blogdescription',
-			array(
-				'selector'        => '.site-description',
-				'render_callback' => 'epbs_customize_partial_blogdescription',
-			)
-		);
-	}
+    if ( isset( $wp_customize->selective_refresh ) ) {
+        $wp_customize->selective_refresh->add_partial(
+            'blogname',
+            array(
+                'selector'        => '.site-title a',
+                'render_callback' => 'epbs_customize_partial_blogname',
+            )
+        );
+        $wp_customize->selective_refresh->add_partial(
+            'blogdescription',
+            array(
+                'selector'        => '.site-description',
+                'render_callback' => 'epbs_customize_partial_blogdescription',
+            )
+        );
+    }
+
+    // Add new Footer section
+    $wp_customize->add_section( 'epbs_footer_section', array(
+        'title'    => __( 'Footer', 'epbs' ),
+        'priority' => 160, // Typically placed near the end of the Customizer
+    ) );
+
+    // Add setting for footer text
+    $wp_customize->add_setting( 'epbs_footer_text', array(
+        'default'           => sprintf( 
+            __( 'Theme: %1$s by %2$s.', 'epbs' ), 
+            'epbs', 
+            '<a href="https://alexgurghis.com/">Alex Gurghis</a>' 
+        ),
+        'sanitize_callback' => 'wp_kses_post', // Allows HTML
+        'transport'         => 'refresh',
+    ) );
+
+    // Add control for footer text
+    $wp_customize->add_control( 'epbs_footer_text', array(
+        'label'    => __( 'Footer Text', 'epbs' ),
+        'section'  => 'epbs_footer_section',
+        'type'     => 'textarea',
+        'priority' => 10,
+    ) );
 }
 add_action( 'customize_register', 'epbs_customize_register' );
 
-/**
- * Render the site title for the selective refresh partial.
- *
- * @return void
- */
-function epbs_customize_partial_blogname() {
-	bloginfo( 'name' );
-}
+// Existing functions...
 
 /**
- * Render the site tagline for the selective refresh partial.
- *
- * @return void
+ * Function to display footer text
  */
-function epbs_customize_partial_blogdescription() {
-	bloginfo( 'description' );
+function epbs_get_footer_text() {
+    return get_theme_mod( 'epbs_footer_text', 
+        sprintf( 
+            __( 'Theme: %1$s by %2$s.', 'epbs' ), 
+            'epbs', 
+            '<a href="https://alexgurghis.com/">Alex Gurghis</a>' 
+        )
+    );
 }
-
-/**
- * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
- */
-function epbs_customize_preview_js() {
-	wp_enqueue_script( 'epbs-customizer', get_template_directory_uri() . '/js/customizer.js', array( 'customize-preview' ), _S_VERSION, true );
-}
-add_action( 'customize_preview_init', 'epbs_customize_preview_js' );

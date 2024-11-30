@@ -71,9 +71,9 @@ get_header();
 							// Previous/next page navigation.
 							the_posts_pagination(
 								array(
-									'prev_text'          => __( 'Prev', 'royalstudio' ),
-									'next_text'          => __( 'Next', 'royalstudio' ),
-									'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'royalstudio' ) . ' </span>',
+									'prev_text'          => __( 'Prev', 'epbs' ),
+									'next_text'          => __( 'Next', 'epbs' ),
+									'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'epbs' ) . ' </span>',
 								)
 							);
 
